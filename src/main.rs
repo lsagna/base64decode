@@ -10,11 +10,20 @@ fn base64decode(input: String) -> String {
         .map(|ch| {                                             //Map char values using Base64 Characters Table
             let ascii = ch as i8;                           
             let convert = match ch {
+                '\u{0}'..='*' => panic!("panic"),
+                ','..='.' => panic!("panic"),
+                ':'..='@' => panic!("panic"),
+                '['..='^' => panic!("panic"),
+                '{'..='\u{d7ff}' => panic!("panic"),
+                '\u{e000}'..='\u{10ffff}' => panic!("panic"),
                 '0' ..= '9' => ascii + NUM_OFFSET,
                 'a' ..= 'z' => ascii + LOWERCASE_OFFSET,
                 'A' ..= 'Z' => ascii + UPPERCASE_OFFSET,
                 '+' => 62,
-                '/' => 63
+                '/' => 63,
+                '`' => panic!("panic"),
+                '_' => panic!("panic")
+
             };
             format!("{:#08b}", convert)[2..].to_string()        //convert indices to binary format and remove the two first digits
         })
@@ -33,8 +42,8 @@ fn base64decode(input: String) -> String {
 }
  
 fn main() {
-    let input = String::new();
-    std::io::stdin().read_line(input).unwrap();
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input).unwrap();
     println!("Input: {}", input);
  
     let output = base64decode(input);
